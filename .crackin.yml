@@ -1,0 +1,14 @@
+---
+crackin:
+  name: "opity"
+  scm: git
+  changelog: CHANGELOG.md
+  branch:
+    production: master
+    development: develop
+  status:
+    verbose: true
+  version: lib/opity/version.rb
+  build:
+    command: rake build
+    after: []
