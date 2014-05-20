@@ -1,0 +1,84 @@
+#!/usr/bin/env ruby
+
+require 'clamp'
+require 'opity'
+# require 'docopt'
+
+# doc = <<-DOCOPT
+# Opity
+#
+# Usage:
+#   #{__FILE__} [options] config
+#
+#   #{__FILE__} [options] ENVIRONMENT
+#   #{__FILE__} [options] ENVIRONMENT COMMAND
+#
+# Options:
+#   -h --help         show this help message and exit
+#      --version      show version and exit
+#   -c --config FILE  specify config file [default: ./.opity.yml]
+# DOCOPT
+#
+# module Opity
+#   class Command
+#     def initialize
+#
+#     end
+#
+#     def run(argv)
+#       STDOUT.sync = true
+#       options = Docopt::docopt(DOCOPT, version: Opity::Version::STRING)
+#     end
+#   end
+# end
+
+module Opity
+  class Command < Clamp::Command
+    option %w{-c --config}, '[CONFIG]', 'configuration file', environment_variable: 'OPITY_CONFIG', default: './.opity.yml' do |config|
+      Opity.config(config)
+    end
+
+    option %w{-e --environment}, '[ENVIRONMENT]', 'environment', environment_variable: 'OPITY_ENV', default: 'development' do |env|
+      Opity.environment = env
+    end
+
+    subcommand 'config', 'dump configuration' do
+      def execute
+        puts "execute"
+        yaml = Opity.config.to_hash.to_yaml
+        puts "Config:"
+        puts yaml
+      end
+    end
+
+    subcommand 'resources', 'dump resources' do
+      def execute
+        puts "## environnent: #{Opity.environment}"
+        list = Opity.config[Opity.environment].resources
+        list.each do |r|
+          puts "%-15s %s" % [r.type, r.name]
+        end
+      end
+    end
+
+    subcommand 'check', 'make sure your opity environment is configured correctly' do
+      def execute
+        raise "BLARG!"
+      end
+    end
+
+    subcommand 'status', 'compare and contrast opity config to cloud resources' do
+      def execute
+        raise "BLARG!"
+      end
+    end
+  end
+end
+
+begin
+  Opity::Command.run
+rescue => e
+  puts "error: #{e.message}"
+  e.backtrace.each { |l| puts "  #{l}" }
+  exit 1
+end
