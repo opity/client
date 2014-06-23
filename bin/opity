@@ -38,23 +38,34 @@ module Opity
       Opity.config(config)
     end
 
-    option %w{-e --environment}, '[ENVIRONMENT]', 'environment', environment_variable: 'OPITY_ENV', default: 'development' do |env|
-      Opity.environment = env
-    end
-
     subcommand 'config', 'dump configuration' do
       def execute
-        puts "execute"
         yaml = Opity.config.to_hash.to_yaml
-        puts "Config:"
+        puts 'Config:'
         puts yaml
       end
     end
 
-    subcommand 'resources', 'dump resources' do
+    subcommand 'secrets', 'dump configuration' do
       def execute
-        puts "## environnent: #{Opity.environment}"
-        list = Opity.config[Opity.environment].resources
+        yaml = Opity.secrets.to_hash.to_yaml
+        puts 'Secrets:'
+        puts yaml
+      end
+    end
+
+    subcommand 'environments', 'show list of environments in configuration' do
+      def execute
+        print_environments
+      end
+    end
+
+    subcommand 'resources', 'dump resources' do
+      parameter '[ENVIRONMENT]', 'the environment to check'
+      def execute
+        return print_environments('must specify environment') unless environment
+        puts "## environnent: #{environment}"
+        list = Opity.config[environment].resources
         list.each do |r|
           puts "%-15s %s" % [r.type, r.name]
         end
@@ -63,13 +74,22 @@ module Opity
 
     subcommand 'check', 'make sure your opity environment is configured correctly' do
       def execute
-        raise "BLARG!"
+        Opity.check
       end
     end
 
     subcommand 'status', 'compare and contrast opity config to cloud resources' do
+      parameter '[ENVIRONMENT]', 'the environment to check'
       def execute
+        return print_environments('must specify environment') unless environment
         raise "BLARG!"
+      end
+    end
+
+    def print_environments(msg='environments')
+      puts "#{msg}:"
+      Opity.environments.each do |e|
+        puts "* #{e}"
       end
     end
   end

@@ -1,5 +1,6 @@
 opity:
   options:
+    application: portal
     domain: rgops.com
     providers:
       - type: balancer
@@ -9,53 +10,54 @@ opity:
       - type: dns
         name: dynect
 
-  production:
-    resources:
-      - type: balancer
-        name: portal
-      - type: compute
-        name: portal
-        total: 5
-        balancer: portal
-        roles:
-          - portal
-      - type: compute
-        name: redis
-        total: 2
-        roles:
-          - cache_redis
-          - cache_sentinel
-      - type: compute
-        name: memcache
-        total: 2
-        roles:
-          - cache_memcached
+  environments:
+    production:
+      resources:
+        - type: balancer
+          name: portal
+        - type: compute
+          name: app
+          total: 5
+          balancer: portal
+          roles:
+            - portal
+        - type: compute
+          name: redis
+          total: 2
+          roles:
+            - cache_redis
+            - cache_sentinel
+        - type: compute
+          name: memcache
+          total: 2
+          roles:
+            - cache_memcached
 
-  staging:
-    resources:
-      - type: balancer
-        name: portal
-      - type: compute
-        name: portal
-        total: 2
-        balancer: portal
-        roles:
-          - portal
-      - type: compute
-        name: redis
-        total: 2
-        roles:
-          - cache_redis
-          - cache_sentinel
-      - type: compute
-        name: memcache
-        total: 2
-        roles:
-          - cache_memcached
+    staging:
+      resources:
+        - type: balancer
+          name: portal
+        - type: compute
+          name: app
+          total: 2
+          balancer: portal
+          roles:
+            - portal
+        - type: compute
+          name: redis
+          total: 2
+          roles:
+            - cache_redis
+            - cache_sentinel
+        - type: compute
+          name: memcache
+          total: 2
+          roles:
+            - cache_memcached
 
-  development:
-    resources:
-      - type: compute
-        name: portal
-        roles:
-          - portal
+    development:
+      resources:
+        - type: compute
+          name: app
+          roles:
+            - portal
