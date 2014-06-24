@@ -2,40 +2,16 @@
 
 require 'clamp'
 require 'opity'
-# require 'docopt'
-
-# doc = <<-DOCOPT
-# Opity
-#
-# Usage:
-#   #{__FILE__} [options] config
-#
-#   #{__FILE__} [options] ENVIRONMENT
-#   #{__FILE__} [options] ENVIRONMENT COMMAND
-#
-# Options:
-#   -h --help         show this help message and exit
-#      --version      show version and exit
-#   -c --config FILE  specify config file [default: ./.opity.yml]
-# DOCOPT
-#
-# module Opity
-#   class Command
-#     def initialize
-#
-#     end
-#
-#     def run(argv)
-#       STDOUT.sync = true
-#       options = Docopt::docopt(DOCOPT, version: Opity::Version::STRING)
-#     end
-#   end
-# end
 
 module Opity
   class Command < Clamp::Command
     option %w{-c --config}, '[CONFIG]', 'configuration file', environment_variable: 'OPITY_CONFIG', default: './.opity.yml' do |config|
-      Opity.config(config)
+      Opity.configfile = config
+      Opity.reset!
+    end
+    option %w{-s --secrets}, '[SECRETS]', 'secret file', environment_variable: 'OPITY_SECRETS', default: '~/.opity.secrets' do |config|
+      Opity.secretsfile = config
+      Opity.reset!
     end
 
     subcommand 'config', 'dump configuration' do
@@ -82,14 +58,20 @@ module Opity
       parameter '[ENVIRONMENT]', 'the environment to check'
       def execute
         return print_environments('must specify environment') unless environment
-        raise "BLARG!"
+        Opity.connect
       end
     end
 
     def print_environments(msg='environments')
       puts "#{msg}:"
       Opity.environments.each do |e|
-        puts "* #{e}"
+        puts "* #{e.name}"
+        e.resources.each do |r|
+          n = r.name
+          t = r.type
+          o = r.options
+          puts '  * %-10.10s %-25.25s %s' % [t, n, (o.count > 0 ? o.map{|k, v| "#{k}: #{v}"}.join(', ') : '')]
+        end
       end
     end
   end

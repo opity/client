@@ -2,26 +2,46 @@ require 'hashie'
 require 'yaml'
 require 'active_support/all'
 
-require 'opity/version'
-require 'opity/config'
-require 'opity/environment'
+require 'require_all'
+require_rel 'opity'
+require 'fog'
+require_rel 'fog'
 
 module Opity
   class << self
-    def secrets(file=File.expand_path("~/.opity.secrets"))
+    attr_accessor :configfile
+    attr_accessor :secretsfile
+
+    def secrets
       @secrets ||= begin
-        data = File.exist?(file) ? YAML.load_file(file) : {}
+        data = loadfile(@secretsfile)
         raise "secrets must have root opity key" unless data['opity']
         Opity::Config.new(data['opity'])
       end
     end
 
-    def config(file="./.opity.yml")
+    def config
       @config ||= begin
-        data = File.exist?(file) ? YAML.load_file(file) : {}
+        data = loadfile(@configfile)
         raise "config must have root opity key" unless data['opity']
         Opity::Config.new(data['opity'])
       end
+    end
+
+    def connect
+      Opity::Connect.instance
+    end
+
+    def secrets_for(name)
+      secrets[name]
+    end
+
+    def providers
+      options['providers'] || []
+    end
+
+    def options
+      config['options']
     end
 
     def environment(name)
@@ -29,8 +49,10 @@ module Opity
     end
 
     def environments
-      list = config['environments']
-      list.map {|k, v| Opity::Environment.new(v)}
+      @environments ||= begin
+        list = config['environments']
+        list.map {|k, v| Opity::Environment.new(k, v.to_hash)}
+      end
     end
 
     def check
@@ -39,5 +61,21 @@ module Opity
       # * providers that are being used have entries in the secrets file
       raise "not implemented"
     end
+
+    def reset!
+      @secrets = nil
+      @config = nil
+    end
+
+    private
+
+    def loadfile(file)
+      f = File.expand_path(file)
+      raise "file #{file} not found" unless File.exists?(f)
+      YAML.load_file(f)
+    end
   end
 end
+
+Opity.configfile = './.opity.yml'
+Opity.secretsfile = '~/.opity.secrets'

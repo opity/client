@@ -19,9 +19,10 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   spec.add_dependency 'clamp', '~> 0.6.3'
-  # spec.add_dependency 'docopt', '~> 0.5.0'
   spec.add_dependency 'hashie'
   spec.add_dependency 'activesupport', '~> 4.1.1'
+  spec.add_dependency 'require_all', '~> 1.3.2'
+  spec.add_dependency 'fog', '1.22.1'
 
   spec.add_development_dependency "bundler", "~> 1.6"
   spec.add_development_dependency "rake"
