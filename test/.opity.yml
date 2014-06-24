@@ -1,5 +1,6 @@
 opity:
   options:
+    version: 1
     application: portal
     domain: rgops.com
     providers:
@@ -14,7 +15,7 @@ opity:
     production:
       resources:
         - type: balancer
-          name: portal
+          name: app
         - type: compute
           name: app
           total: 5
@@ -36,7 +37,7 @@ opity:
     staging:
       resources:
         - type: balancer
-          name: portal
+          name: app
         - type: compute
           name: app
           total: 2

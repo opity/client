@@ -51,7 +51,11 @@ module Opity
     def environments
       @environments ||= begin
         list = config['environments']
-        list.map {|k, v| Opity::Environment.new(k, v.to_hash)}
+        list.map do |k, v|
+          h = v.to_hash
+          h['application'] = options['application']
+          Opity::Environment.new(k, h)
+        end
       end
     end
 

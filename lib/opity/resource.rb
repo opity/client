@@ -18,6 +18,7 @@ module Opity
     class Base < Model
       attribute :name
       attribute :type
+      attribute :environment
 
       def options
         opts = @data.dup
@@ -29,6 +30,16 @@ module Opity
 
       def list
         [self]
+      end
+
+      def options_string
+        o = options
+        return '' unless o.count > 0
+        o = o.delete_if {|k, v| v.nil?}
+        o.map do |k, v|
+          val = v.is_a?(Array) ? v.join(',') : v
+          "#{k}=#{val}"
+        end.join('; ')
       end
     end
   end
