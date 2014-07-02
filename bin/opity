@@ -13,6 +13,7 @@ module Opity
       Opity.secretsfile = config
       Opity.reset!
     end
+    option %w{--[no-]color}, :flag, 'colored output', default: true
 
     subcommand 'config', 'dump configuration' do
       def execute
@@ -61,13 +62,12 @@ module Opity
       def execute
         return print_environments('must specify environment') unless environment
         e = Opity.environment(environment)
-        puts "* #{e.name}"
-        e.resource_list.each do |r|
-          b = r.valid? ? 'x' : ''
-          n = r.name
-          t = r.type
-          o = r.options_string
-          puts '  %1.1s %-10.10s %-30.30s %s' % [b, t, n, o]
+        if color?
+          puts "#{e.name}".colorize(:light_cyan)
+          puts e.status.color_to_s
+        else
+          puts "#{e.name}"
+          puts e.status.to_s
         end
       end
     end
@@ -76,12 +76,6 @@ module Opity
       puts "#{msg}:"
       Opity.environments.each do |e|
         puts "* #{e.name}"
-        e.resource_list.each do |r|
-          n = r.name
-          t = r.type
-          o = r.options_string
-          puts '  * %-10.10s %-30.30s %s' % [t, n, o]
-        end
       end
     end
   end

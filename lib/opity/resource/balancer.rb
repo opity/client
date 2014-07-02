@@ -5,9 +5,10 @@ module Opity
       attribute :type
       attribute :environment
       attribute :application
+      attribute :create, default: true
 
       def list
-        [self, Opity::Resource::Dns.new(name: self.name, type: 'dns')]
+        [self, Opity::Resource::Dns.new(name: "#{self.name}-#{self.environment}-#{self.application}", type: 'dns')]
       end
 
       def valid?

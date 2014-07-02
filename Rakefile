@@ -5,6 +5,7 @@ RSpec::Core::RakeTask.new(:spec)
 
 task :default => :spec
 
+# used this to test new fog / dynect fix
 task :records do
   require 'opity'
   s = Time.now
@@ -16,4 +17,9 @@ task :records do
     puts "record: #{r.inspect}"
   end
   puts "#{Time.now} records: #{list.count} time: #{e.to_i - s.to_i}"
+end
+
+task :color do
+  require 'colorize'
+  puts String.color_matrix
 end

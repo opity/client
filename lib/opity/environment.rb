@@ -17,8 +17,18 @@ module Opity
       end
     end
 
+    def status
+      @status ||= begin
+        status = Opity::Status.new
+        resource_list.each do |r|
+          status.add(r)
+        end
+        status
+      end
+    end
+
     def resource_list
-      out = []
+      out = [] + Opity.config.resource_list
       self.resources.each do |r|
         out << r.list
       end

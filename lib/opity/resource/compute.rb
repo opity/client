@@ -8,6 +8,7 @@ module Opity
       attribute :total, default: 1
       attribute :balancer, default: nil
       has_many :roles
+      attribute :create, default: true
 
       def list
         out = []
@@ -20,6 +21,12 @@ module Opity
           out << Opity::Resource::Dns.new(name: "#{newdata[:name]}-#{self.environment}-#{self.application}", type: 'dns')
         end
         out
+      end
+
+      def options
+        options = super
+        options.delete(:total)
+        options
       end
 
       def valid?

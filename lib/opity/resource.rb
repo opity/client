@@ -18,13 +18,17 @@ module Opity
     class Base < Model
       attribute :name
       attribute :type
+      attribute :application
       attribute :environment
+      attribute :create, default: true
 
       def options
         opts = @data.dup
         opts.delete(:name)
         opts.delete(:type)
         opts.delete(:cloud)
+        opts.delete(:environment)
+        opts.delete(:application)
         opts
       end
 
@@ -32,7 +36,7 @@ module Opity
         [self]
       end
 
-      def name
+      def fullname
         "#{@data[:name]}-#{self.environment}-#{self.application}"
       end
 

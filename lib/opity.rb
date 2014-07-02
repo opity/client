@@ -16,7 +16,7 @@ module Opity
       @secrets ||= begin
         data = loadfile(@secretsfile)
         raise "secrets must have root opity key" unless data['opity']
-        Opity::Config.new(data['opity'])
+        Hashie::Mash.new(data['opity'])
       end
     end
 
@@ -37,15 +37,15 @@ module Opity
     end
 
     def providers
-      options['providers'] || []
+      options.providers
     end
 
     def options
-      config['options']
+      config.options
     end
 
     def domain
-      options['domain']
+      options.domain
     end
 
     def environment(name)
@@ -53,14 +53,18 @@ module Opity
     end
 
     def environments
-      @environments ||= begin
-        list = config['environments']
-        list.map do |k, v|
-          h = v.to_hash
-          h['application'] = options['application']
-          Opity::Environment.new(k, h)
-        end
-      end
+      config.environments
+      # @environments ||= begin
+      #   list = config.environments
+      #   list.inject({}) do |h, e|
+      #     puts "E:#{e.name} #{e.inspect}"
+      #     h[e.name] = e
+      #     # h = v.to_hash
+      #     # h['application'] = options['application']
+      #     # Opity::Environment.new(k, h)
+      #     h
+      #   end
+      # end
     end
 
     def check

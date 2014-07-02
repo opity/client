@@ -11,6 +11,12 @@ opity:
       - type: dns
         name: dynect
 
+  resources:
+    # resources that belong to other applications
+    # or to general infrastructure
+    # can be used to validate that dependent apps
+    # or infrastructure exist. (eg: security groups, iam roles)
+
   environments:
     production:
       resources:

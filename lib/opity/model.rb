@@ -48,7 +48,7 @@ module Opity
         @attributes ||= {}
         @attributes[namesym] = options
 
-        default = options[:default] || nil
+        default = defined?(options[:default]) ? options[:default] : nil
         define_method "#{name}" do
           # puts "get:#{name}"
           @data[namesym] ||= default.is_a?(Proc) ? default.call : default

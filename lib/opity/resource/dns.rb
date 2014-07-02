@@ -5,6 +5,7 @@ module Opity
       attribute :type
       attribute :environment
       attribute :application
+      attribute :create, default: true
 
       attribute :ttl, default: 60
 
@@ -14,6 +15,10 @@ module Opity
         r = self.class.records.detect { |e| e.name == n }
         return false if r.nil?
         true
+      end
+
+      def fullname
+        name
       end
 
       class << self
