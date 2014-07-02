@@ -32,6 +32,10 @@ module Opity
         [self]
       end
 
+      def name
+        "#{@data[:name]}-#{self.environment}-#{self.application}"
+      end
+
       def options_string
         o = options
         return '' unless o.count > 0

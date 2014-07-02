@@ -44,8 +44,12 @@ module Opity
       config['options']
     end
 
+    def domain
+      options['domain']
+    end
+
     def environment(name)
-      environments[name]
+      environments.detect{|e| e.name == name}
     end
 
     def environments

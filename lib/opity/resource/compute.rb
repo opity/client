@@ -21,6 +21,23 @@ module Opity
         end
         out
       end
+
+      def valid?
+        # x = Opity.connect.compute
+        # ! x.servers.all({"tag:Name" => name}).nil?
+        c = self.class.computes.detect {|e| e.tags['Name'] == name}
+        return false unless c
+        true
+      end
+
+      class << self
+        def computes
+          @computes ||= begin
+            x = Opity.connect.compute
+            x.servers.all
+          end
+        end
+      end
     end
   end
 end
