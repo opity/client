@@ -25,7 +25,7 @@ opity:
         - type: compute
           name: app
           total: 6
-          balancer: portal
+          balancer: app
           roles:
             - portal
         - type: compute
@@ -47,7 +47,7 @@ opity:
         - type: compute
           name: app
           total: 2
-          balancer: portal
+          balancer: app
           roles:
             - portal
         - type: compute
